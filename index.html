@@ -3,72 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Swift Web Design Course</title>
+  <title>CodeVent—Swift Web Development Course</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .gradient-bg {
       background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     }
-    
     .card {
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    
     .card:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     }
-    
     .btn-glow {
       transition: all 0.3s ease;
     }
-    
     .btn-glow:hover {
       box-shadow: 0 0 15px rgba(66, 153, 225, 0.6);
       transform: translateY(-2px);
     }
-    
-    .password-tag {
-      background: rgba(76, 175, 80, 0.1);
-      border: 1px solid rgba(76, 175, 80, 0.3);
-      color: #4CAF50;
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 14px;
-      margin: 3px;
-      display: inline-block;
-    }
-    
     .video-container {
       border-radius: 15px;
       overflow: hidden;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     }
-    
     .toggle-section {
       transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
       overflow: hidden;
     }
-    
     .expandable {
       max-height: 0;
       opacity: 0;
     }
-    
     .expanded {
       max-height: 500px;
       opacity: 1;
     }
-    
     .pulse {
       animation: pulse 2s infinite;
     }
-    
     @keyframes pulse {
       0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
       70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
       100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+    }
+    #contact-payment-section {
+      display: none;
+    }
+    .toggle-btn {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: bold;
+      margin: 20px auto;
+      cursor: pointer;
+      display: block;
+      max-width: 300px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+    .toggle-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
+    }
+    .error {
+      color: #ef4444;
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+    }
+    .success {
+      color: #10b981;
     }
   </style>
 </head>
@@ -76,22 +83,59 @@
   <div class="gradient-bg py-6">
     <div class="container mx-auto px-4 text-center">
       <h1 class="text-4xl md:text-5xl font-bold mb-2">Swift Web Development</h1>
-      <p class="text-xl opacity-90">Beginner–Professional Stage | Deployment </p>
+      <p class="text-xl opacity-90">Beginner–Professional Stage | Deployment</p>
       <div class="w-24 h-1 bg-green-400 mx-auto mt-4 rounded-full"></div>
     </div>
   </div>
 
-  <!-- Sign-in Popup -->
-  <div id="signin-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
+  <!-- Auth Popup -->
+  <div id="auth-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
     <div class="bg-gray-800 rounded-2xl p-8 w-96 shadow-2xl">
-      <div class="text-center mb-6">
-        <h2 class="text-2xl font-bold text-green-400 mb-2">Welcome Back</h2>
-        <p class="text-gray-400">Sign in to continue your learning journey</p>
+      <!-- Sign Up Form -->
+      <div id="signup-form">
+        <div class="text-center mb-6">
+          <h2 class="text-2xl font-bold text-green-400 mb-2">Create Account</h2>
+          <p class="text-gray-400">Join to access your course</p>
+        </div>
+        <input type="email" id="signup-email" placeholder="Email" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg mb-2 focus:outline-none focus:ring-2 focus:ring-green-500 text-white">
+        <p id="email-error" class="error hidden"></p>
+        
+        <div class="relative mb-2">
+          <input type="password" id="signup-password" placeholder="Password (6+ chars, 1 number, 1 uppercase)" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-white pr-10">
+          <button type="button" id="toggle-signup-password" class="absolute right-3 top-3 text-gray-400 hover:text-white">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <p id="password-error" class="error hidden"></p>
+        
+        <button class="w-full py-3 bg-green-600 hover:bg-green-700 rounded-lg font-bold transition duration-300" onclick="signUp()">Sign Up</button>
+        <p class="text-center text-gray-400 mt-3">
+          Already have an account? <button class="text-green-400 underline" onclick="showSignIn()">Sign In</button>
+        </p>
+        <p id="signup-msg" class="text-red-400 mt-3 text-sm"></p>
       </div>
-      <input type="email" id="email" placeholder="Enter your email" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-green-500 text-white">
-      <input type="password" id="password" placeholder="Enter your password" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-green-500 text-white">
-      <button class="w-full py-3 bg-green-600 hover:bg-green-700 rounded-lg font-bold transition duration-300" onclick="signIn()">Sign In</button>
-      <p id="signin-msg" class="text-red-400 mt-3 text-sm"></p>
+
+      <!-- Sign In Form -->
+      <div id="signin-form" class="hidden">
+        <div class="text-center mb-6">
+          <h2 class="text-2xl font-bold text-green-400 mb-2">Welcome Back</h2>
+          <p class="text-gray-400">Sign in to continue</p>
+        </div>
+        <input type="email" id="signin-email" placeholder="Email" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-green-500 text-white">
+        
+        <div class="relative mb-4">
+          <input type="password" id="signin-password" placeholder="Password" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-white pr-10">
+          <button type="button" id="toggle-signin-password" class="absolute right-3 top-3 text-gray-400 hover:text-white">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        
+        <button class="w-full py-3 bg-green-600 hover:bg-green-700 rounded-lg font-bold transition duration-300" onclick="signIn()">Sign In</button>
+        <p class="text-center text-gray-400 mt-3">
+          Don't have an account? <button class="text-green-400 underline" onclick="showSignUp()">Sign Up</button>
+        </p>
+        <p id="signin-msg" class="text-red-400 mt-3 text-sm"></p>
+      </div>
     </div>
   </div>
 
@@ -99,8 +143,8 @@
   <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
     <div class="bg-gray-800 rounded-2xl p-8 w-80 text-center shadow-2xl">
       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500 mx-auto mb-4"></div>
-      <h2 class="text-xl font-bold mb-2">Signing you in...</h2>
-      <p class="text-gray-400">Please wait while we prepare your course</p>
+      <h2 class="text-xl font-bold mb-2">Setting up your account...</h2>
+      <p class="text-gray-400">Please wait</p>
     </div>
   </div>
 
@@ -119,16 +163,12 @@
     <!-- Video Section -->
     <div id="video-section" class="max-w-4xl mx-auto hidden">
       <div class="video-container mb-8">
-        <div class="relative">
-          <!-- YouTube iframe - Default video player -->
-          <iframe id="youtubeVideo" class="w-full h-96" src="" allowfullscreen frameborder="0"></iframe>
-        </div>
+        <iframe id="youtubeVideo" class="w-full h-96" src="" allowfullscreen frameborder="0"></iframe>
       </div>
       
-      <!-- User Info Toggle -->
       <div class="bg-gray-800 rounded-2xl p-6">
         <button id="toggleUserInfo" class="w-full flex justify-between items-center py-3 px-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-300">
-          <span class="font-bold">Your Account Information</span>
+          <span class="font-bold">Your Account</span>
           <i class="fas fa-chevron-down transition-transform duration-300" id="toggleIcon"></i>
         </button>
         <div id="userInfoContent" class="toggle-section expandable mt-4">
@@ -145,35 +185,29 @@
     <!-- Admin Login -->
     <div id="admin-login" class="max-w-2xl mx-auto bg-gray-800 rounded-2xl p-8 mb-10 card">
       <h3 class="text-xl font-bold text-center mb-4">Admin Access</h3>
-      <p class="text-gray-400 text-center mb-6">Admin Portal</p>
-      <input type="password" id="adminPass" placeholder="Enter admin password" class="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white">
+      <p class="text-gray-400 text-center mb-6">Enter admin password to generate access codes</p>
+      <input type="password" id="adminPass" placeholder="Admin password" class="w-full p-4 bg-gray-700 border border-gray-600 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white">
       <button class="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg font-bold transition duration-300 btn-glow" onclick="checkAdmin()">Login as Admin</button>
     </div>
 
     <!-- Admin Panel -->
     <div id="admin-panel" class="max-w-2xl mx-auto bg-gray-800 rounded-2xl p-8 mb-10 hidden">
       <div class="text-center mb-6">
-        <h2 class="text-2xl font-bold text-blue-400">Password Generator</h2>
-        <p class="text-gray-400">Generate access codes for students</p>
+        <h2 class="text-2xl font-bold text-blue-400">Access Code Generator</h2>
+        <p class="text-gray-400">Generate one-time codes for students</p>
       </div>
-      
-      <button class="w-full py-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 rounded-lg font-bold mb-6 transition duration-300 btn-glow pulse" onclick="generatePassword()">Generate New Access Code</button>
-      
+      <button class="w-full py-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 rounded-lg font-bold mb-6 transition duration-300 btn-glow pulse" onclick="generateAccessCode()">
+        Generate New Access Code
+      </button>
       <div class="mb-4">
-        <p class="font-bold text-lg mb-2">Generated Access Code:</p>
-        <div id="generated" class="text-2xl font-bold text-green-400 py-3 px-4 bg-gray-700 rounded-lg break-all"></div>
-      </div>
-      
-      <div class="mb-6">
-        <p class="font-bold text-lg mb-3">All Active Access Codes:</p>
-        <div id="password-list" class="bg-gray-700 rounded-lg p-4 max-h-60 overflow-y-auto min-h-20">
-          <p class="text-gray-400">No codes generated yet</p>
+        <p class="font-bold text-lg mb-2">Generated Code:</p>
+        <div id="generated-code" class="text-2xl font-bold text-green-400 py-3 px-4 bg-gray-700 rounded-lg break-all">
+          —
         </div>
       </div>
-      
       <div class="flex gap-3">
-        <button class="flex-1 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-bold transition duration-300" onclick="clearPasswords()">Clear All Codes</button>
-        <button class="flex-1 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg font-bold transition duration-300" onclick="logoutAdmin()">Exit Admin Mode</button>
+        <button class="flex-1 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-bold transition duration-300" onclick="clearAllCodes()">Clear All</button>
+        <button class="flex-1 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg font-bold transition duration-300" onclick="logoutAdmin()">Exit Admin</button>
       </div>
     </div>
 
@@ -183,42 +217,43 @@
         <div class="bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl p-6 text-center">
           <i class="fas fa-code text-4xl mb-4"></i>
           <h3 class="text-xl font-bold mb-2">Code Editor</h3>
-          <p class="mb-4">Practice what you learn with our built-in code editor</p>
+          <p class="mb-4">Practice what you learn</p>
           <button class="py-2 px-6 bg-white text-orange-600 font-bold rounded-lg hover:bg-orange-50 transition duration-300">Start Practicing</button>
         </div>
       </a>
-      
       <a href="playground.html" class="card" target="_self">
         <div class="bg-gradient-to-r from-pink-600 to-purple-600 rounded-2xl p-6 text-center">
           <i class="fas fa-laptop-code text-4xl mb-4"></i>
           <h3 class="text-xl font-bold mb-2">Coding Playground</h3>
-          <p class="mb-4">Explore interactive examples and advanced concepts</p>
+          <p class="mb-4">Explore interactive examples</p>
           <button class="py-2 px-6 bg-white text-pink-600 font-bold rounded-lg hover:bg-pink-50 transition duration-300">Explore Now</button>
         </div>
       </a>
     </div>
 
-    <!-- Payment & Contact Section -->
-    <div class="max-w-4xl mx-auto mb-10">
+    <!-- Toggle Contact/Payment -->
+    <button class="toggle-btn" onclick="toggleContactSection()">
+      <i class="fas fa-unlock-alt"></i> Reveal Contact & Payment
+    </button>
+
+    <div id="contact-payment-section" class="max-w-4xl mx-auto mb-10">
       <h3 class="text-2xl font-bold text-center mb-8">Payment & Support</h3>
       <div class="grid md:grid-cols-2 gap-4">
         <div class="bg-gray-800 rounded-2xl p-6 text-center">
           <i class="fas fa-university text-3xl text-blue-400 mb-4"></i>
           <h4 class="font-bold mb-2">Bank Payment</h4>
-          <p class="text-lg">Opay: <strong>8185947780</strong></p>
-          <p class="text-gray-400">Ezenwa Chidera Emmanuel</p>
-          <p class="text-green-400 font-bold">₦5,000</p>
+          <p class="text-lg">Access: <strong>1953129048</strong></p>
+          <p class="text-gray-400">Chidera Emmanuel Ezenwa</p>
+          <p class="text-green-400 font-bold">₦3,500</p>
         </div>
-        
         <div class="bg-gray-800 rounded-2xl p-6 text-center">
           <a href="https://wa.me/2348185947780" target="_blank" class="block">
             <i class="fab fa-whatsapp text-3xl text-green-400 mb-4"></i>
             <h4 class="font-bold mb-2">WhatsApp Support</h4>
-            <p class="text-gray-400">Confirm payment or get instructions</p>
+            <p class="text-gray-400">Confirm payment or get help</p>
             <button class="mt-2 py-2 px-6 bg-green-600 hover:bg-green-700 rounded-lg font-bold transition duration-300">Contact Us</button>
           </a>
         </div>
-        
         <div class="bg-gray-800 rounded-2xl p-6 text-center">
           <a href="tel:+2348185947780" class="block" target="_blank">
             <i class="fas fa-phone text-3xl text-blue-400 mb-4"></i>
@@ -227,7 +262,6 @@
             <button class="mt-2 py-2 px-6 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold transition duration-300">Call Now</button>
           </a>
         </div>
-        
         <div class="bg-gray-800 rounded-2xl p-6 text-center">
           <a href="mailto:emezch93@gmail.com" class="block" target="_blank">
             <i class="fas fa-envelope text-3xl text-yellow-400 mb-4"></i>
@@ -241,17 +275,28 @@
   </div>
 
   <footer class="bg-gray-800 py-6 text-center">
-    <p class="text-gray-400">&copy; 2025_Premium Web Development Course. All rights reserved.</p>
+    <p class="text-gray-400">&copy; 2025 Premium Web Development Course. All rights reserved.</p>
   </footer>
 
   <script>
-    // Check if user is already logged in AND course is unlocked
-    document.addEventListener('DOMContentLoaded', function() {
-      // Check if user is logged in
+    // Admin passwords (never shown to users)
+    const ADMIN_PASSWORDS = [
+      "CV2025-A1B2C3", "CV2025-D4E5F6", "CV2025-G7H8I9", "CV2025-J0K1L2",
+      "CV2025-M3N4O5", "CV2025-P6Q7R8", "CV2025-S9T0U1", "CV2025-V2W3X4",
+      "CV2025-Y5Z6A7", "CV2025-B8C9D0", "CV2025-E1F2G3", "CV2025-H4I5J6",
+      "CV2025-K7L8M9", "CV2025-N0O1P2", "CV2025-Q3R4S5", "CV2025-T6U7V8",
+      "CV2025-W9X0Y1", "CV2025-Z2A3B4", "CV2025-C5D6E7", "CV2025-F8G9H0",
+      "CV2025-I1J2K3", "CV2025-L4M5N6", "CV2025-O7P8Q9", "CV2025-R0S1T2",
+      "CV2025-U3V4W5", "CV2025-X6Y7Z8", "CV2025-A9B0C1", "CV2025-D2E3F4",
+      "CV2025-G5H6I7", "CV2025-J8K9L0", "CV2025-M1N2O3", "CV2025-P4Q5R6",
+      "CV2025-S7T8U9", "CV2025-V0W1X2", "CV2025-Y3Z4A5", "CV2025-B6C7D8",
+      "CV2025-E9F0G1", "CV2025-H2I3J4", "CV2025-K5L6M7", "CV2025-N8O9P0"
+    ];
+
+    // DOM Loaded
+    document.addEventListener('DOMContentLoaded', () => {
       if (localStorage.getItem("userEmail")) {
         document.getElementById("userEmailDisplay").textContent = localStorage.getItem("userEmail");
-        
-        // Check if course is already unlocked
         if (localStorage.getItem("courseUnlocked") === "true") {
           showVideo();
           document.getElementById("unlock-section").classList.add("hidden");
@@ -260,16 +305,20 @@
           document.getElementById("unlock-section").classList.remove("hidden");
         }
       } else {
-        document.getElementById("signin-overlay").classList.remove("hidden");
+        document.getElementById("auth-overlay").classList.remove("hidden");
       }
-      loadPasswords();
     });
 
-    // Toggle user info section
+    // Toggle Contact Section
+    function toggleContactSection() {
+      const el = document.getElementById("contact-payment-section");
+      el.style.display = el.style.display === "block" ? "none" : "block";
+    }
+
+    // Toggle user info
     document.getElementById("toggleUserInfo").addEventListener("click", function() {
       const content = document.getElementById("userInfoContent");
       const icon = document.getElementById("toggleIcon");
-      
       if (content.classList.contains("expanded")) {
         content.classList.remove("expanded");
         content.classList.add("expandable");
@@ -281,31 +330,80 @@
       }
     });
 
-    // ---- Sign-in logic (using localStorage for persistence) ----
-    function signIn() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const msg = document.getElementById("signin-msg");
+    // === PASSWORD VISIBILITY TOGGLE ===
+    document.getElementById('toggle-signup-password').addEventListener('click', function() {
+      const passField = document.getElementById('signup-password');
+      const type = passField.getAttribute('type') === 'password' ? 'text' : 'password';
+      passField.setAttribute('type', type);
+      this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    });
 
-      if (!email || !password) {
-        msg.textContent = "Please enter both email and password";
+    document.getElementById('toggle-signin-password').addEventListener('click', function() {
+      const passField = document.getElementById('signin-password');
+      const type = passField.getAttribute('type') === 'password' ? 'text' : 'password';
+      passField.setAttribute('type', type);
+      this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    });
+
+    // === SIGN UP VALIDATION ===
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    function validatePassword(password) {
+      if (password.length < 6) return "Password must be at least 6 characters";
+      if (!/[A-Z]/.test(password)) return "Password must contain at least one uppercase letter";
+      if (!/[0-9]/.test(password)) return "Password must contain at least one number";
+      return null;
+    }
+
+    function signUp() {
+      const email = document.getElementById("signup-email").value.trim();
+      const password = document.getElementById("signup-password").value;
+      const emailError = document.getElementById("email-error");
+      const passwordError = document.getElementById("password-error");
+      const msg = document.getElementById("signup-msg");
+
+      emailError.textContent = "";
+      emailError.classList.add("hidden");
+      passwordError.textContent = "";
+      passwordError.classList.add("hidden");
+      msg.textContent = "";
+
+      if (!email) {
+        emailError.textContent = "Email is required";
+        emailError.classList.remove("hidden");
+        return;
+      }
+      if (!validateEmail(email)) {
+        emailError.textContent = "Please enter a valid email";
+        emailError.classList.remove("hidden");
         return;
       }
 
-      // Store in localStorage so user doesn't have to sign in again
+      const passwordErr = validatePassword(password);
+      if (passwordErr) {
+        passwordError.textContent = passwordErr;
+        passwordError.classList.remove("hidden");
+        return;
+      }
+
+      const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
+      if (existingUsers.some(u => u.email === email)) {
+        msg.textContent = "Account already exists. Please sign in.";
+        return;
+      }
+
+      existingUsers.push({ email, password });
+      localStorage.setItem("users", JSON.stringify(existingUsers));
       localStorage.setItem("userEmail", email);
-      localStorage.setItem("userPassword", password);
-      document.getElementById("userEmailDisplay").textContent = email;
 
-      document.getElementById("signin-overlay").classList.add("hidden");
+      document.getElementById("auth-overlay").classList.add("hidden");
       document.getElementById("loading-overlay").classList.remove("hidden");
-
       setTimeout(() => {
         document.getElementById("loading-overlay").classList.add("hidden");
-        const username = email.split("@")[0];
-        alert("Welcome back, " + username + "!");
-        
-        // Check if course is already unlocked
+        document.getElementById("userEmailDisplay").textContent = email;
         if (localStorage.getItem("courseUnlocked") === "true") {
           showVideo();
           document.getElementById("unlock-section").classList.add("hidden");
@@ -313,57 +411,92 @@
         } else {
           document.getElementById("unlock-section").classList.remove("hidden");
         }
-      }, 2000);
+      }, 1500);
     }
-// Sign out function (clears everything)
+
+    // === SIGN IN ===
+    function signIn() {
+      const email = document.getElementById("signin-email").value.trim();
+      const password = document.getElementById("signin-password").value;
+      const msg = document.getElementById("signin-msg");
+
+      if (!email || !password) {
+        msg.textContent = "Please enter both email and password";
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+      const user = users.find(u => u.email === email && u.password === password);
+      if (!user) {
+        msg.textContent = "Invalid email or password";
+        return;
+      }
+
+      localStorage.setItem("userEmail", email);
+      document.getElementById("auth-overlay").classList.add("hidden");
+      document.getElementById("loading-overlay").classList.remove("hidden");
+      setTimeout(() => {
+        document.getElementById("loading-overlay").classList.add("hidden");
+        document.getElementById("userEmailDisplay").textContent = email;
+        if (localStorage.getItem("courseUnlocked") === "true") {
+          showVideo();
+          document.getElementById("unlock-section").classList.add("hidden");
+          document.getElementById("video-section").classList.remove("hidden");
+        } else {
+          document.getElementById("unlock-section").classList.remove("hidden");
+        }
+      }, 3500);
+    }
+
+    function showSignIn() {
+      document.getElementById("signup-form").classList.add("hidden");
+      document.getElementById("signin-form").classList.remove("hidden");
+    }
+
+    function showSignUp() {
+      document.getElementById("signin-form").classList.add("hidden");
+      document.getElementById("signup-form").classList.remove("hidden");
+    }
+
+    // === CORE FUNCTIONS ===
     function signOut() {
-      localStorage.clear();
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userAccessCode");
       location.reload();
     }
 
-    // ---- Unlock logic (now using localStorage for persistence) ----
     function unlockVideo() {
       const code = document.getElementById("unlockCode").value.trim();
       const msg = document.getElementById("unlock-msg");
-      const validPasswords = JSON.parse(localStorage.getItem("validPasswords") || "[]");
+      const validCodes = JSON.parse(localStorage.getItem("studentAccessCodes") || "[]");
 
-      if (validPasswords.includes(code)) {
-        // Store in localStorage so course stays unlocked
+      if (validCodes.includes(code)) {
         localStorage.setItem("courseUnlocked", "true");
         localStorage.setItem("userAccessCode", code);
         document.getElementById("userAccessCode").textContent = code;
-        
-        msg.style.color = "#4CAF50";
-        msg.textContent = "Access granted! Loading your course...";
-        
+        msg.style.color = "#10b981";
+        msg.textContent = "Access granted! Loading course...";
         setTimeout(() => {
           document.getElementById("unlock-section").classList.add("hidden");
           showVideo();
         }, 1500);
       } else {
-        msg.textContent = "Invalid access code. Please contact admin.";
+        msg.textContent = "Invalid access code. Contact admin.";
       }
     }
 
-    // Show video function - now using YouTube as default
     function showVideo() {
       document.getElementById("video-section").classList.remove("hidden");
-      
-      // Always use YouTube as the video player
-      const youtubeVideo = document.getElementById("youtubeVideo");
-      youtubeVideo.src = "https://www.youtube.com/embed/ZoQ-406vB0g?autoplay=1&mute=0";
+      document.getElementById("youtubeVideo").src = "https://www.youtube.com/embed/ZoQ-406vB0g?autoplay=1&mute=0";
     }
 
-    // ---- Admin logic ----
     function checkAdmin() {
-      const adminPassword = "JBSWY3DPEHPK3PXPZPCVAFJSLCBBSKKDBXBBXJNCLFKCNNDNNCMCMCMMCMGMGMM";
-      const input = document.getElementById("adminPass").value.trim();
-      
-      if (input === adminPassword) {
+      const pass = document.getElementById("adminPass").value.trim();
+      if (ADMIN_PASSWORDS.includes(pass)) {
         document.getElementById("admin-login").classList.add("hidden");
         document.getElementById("admin-panel").classList.remove("hidden");
       } else {
-        alert("Wrong Admin Password!");
+        alert("❌ Invalid admin password.");
       }
     }
 
@@ -372,50 +505,24 @@
       document.getElementById("admin-login").classList.remove("hidden");
     }
 
-    function generatePassword() {
+    function generateAccessCode() {
       const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-      let pass = "";
+      let code = "";
       for (let i = 0; i < 8; i++) {
-        pass += chars.charAt(Math.floor(Math.random() * chars.length));
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
       }
-      document.getElementById("generated").textContent = pass;
-
-      let stored = JSON.parse(localStorage.getItem("validPasswords") || "[]");
-      if (!stored.includes(pass)) {
-        stored.push(pass);
-        localStorage.setItem("validPasswords", JSON.stringify(stored));
-        updatePasswordList();
-      }
+      document.getElementById("generated-code").textContent = code;
+      let codes = JSON.parse(localStorage.getItem("studentAccessCodes") || "[]");
+      codes.push(code);
+      localStorage.setItem("studentAccessCodes", JSON.stringify(codes));
     }
 
-    function loadPasswords() {
-      updatePasswordList();
-    }
-
-    function updatePasswordList() {
-      const passwords = JSON.parse(localStorage.getItem("validPasswords") || "[]");
-      const listElement = document.getElementById("password-list");
-      listElement.innerHTML = "";
-      
-      if (passwords.length === 0) {
-        listElement.innerHTML = "<p class='text-gray-400'>No codes generated yet</p>";
-      } else {
-        passwords.forEach((pass, index) => {
-          const passElement = document.createElement("div");
-          passElement.className = "password-tag";
-          passElement.textContent = pass;
-          listElement.appendChild(passElement);
-        });
-      }
-    }
-
-    function clearPasswords() {
-      if (confirm("Are you sure you want to clear all generated access codes? This will invalidate all existing codes.")) {
-        localStorage.removeItem("validPasswords");
-        document.getElementById("generated").textContent = "";
-        updatePasswordList();
-        // Also clear course unlocked status for all users
+    function clearAllCodes() {
+      if (confirm("Clear all access codes?")) {
+        localStorage.removeItem("studentAccessCodes");
         localStorage.removeItem("courseUnlocked");
+        document.getElementById("generated-code").textContent = "—";
+        alert("All access codes cleared.");
       }
     }
   </script>
